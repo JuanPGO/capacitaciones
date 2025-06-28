@@ -1,10 +1,10 @@
-
-import {useState} from 'react'
+import {useState, useEffect} from 'react'
 import confetti from 'canvas-confetti'
 import Square from './components/Square'
 import {TURNS} from './constants'
 import {checkWinnerFrom,checkEndGame} from './logic/board'
 import WinnerModal from './components/WinnerModal'
+import {saveGameToStorage, resetGameStorage} from './logic/storage'
 
 
 function App() {
@@ -33,8 +33,7 @@ function App() {
     setTurn(TURNS.X)
     setWinner(null)
 
-    window.localStorage.removeItem('board')
-    window.localStorage.removeItem('turn')
+    resetGameStorage()
   }
 
 
@@ -52,11 +51,7 @@ function App() {
     // cambiar el turno
     const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     setTurn(newTurn)
-    //guardar aqui la partida
-    //guardar el estado del tablero
-    window.localStorage.setItem('board', JSON.stringify(newBoard))
-    //guardar el turno actual
-    window.localStorage.setItem('turn', newTurn)
+    
     // revisar si hay un ganador
     const newWinner = checkWinnerFrom(newBoard)
     if (newWinner){
@@ -66,6 +61,12 @@ function App() {
       setWinner(false) // empate
     }
   }
+
+
+  // cada vez que el turno o el tablero cambie, guardamos el estado del juego
+  useEffect(() => {
+    saveGameToStorage({board: newBoard, turn: newTurn})
+  },[turn, board])
 
   return (
   <main className="board">
