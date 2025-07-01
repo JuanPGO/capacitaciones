@@ -36,7 +36,8 @@ function App() {
     resetGameStorage()
   }
 
-
+  const newBoard = [...board]
+  const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
 
   const updateBoard = (index) =>{
     // no actualizamos si esta algun elemento en la posición
@@ -44,12 +45,10 @@ function App() {
 
 
     // actualizar el tablero
-    const newBoard = [...board]
     newBoard[index] = turn // x u o
     setBoard(newBoard)
 
     // cambiar el turno
-    const newTurn = turn === TURNS.X ? TURNS.O : TURNS.X
     setTurn(newTurn)
     
     // revisar si hay un ganador
@@ -66,7 +65,7 @@ function App() {
   // cada vez que el turno o el tablero cambie, guardamos el estado del juego
   useEffect(() => {
     saveGameToStorage({board: newBoard, turn: newTurn})
-  },[turn, board])
+  },[newBoard, newTurn])
 
   return (
   <main className="board">
